@@ -1,0 +1,75 @@
+drop table member;
+drop table product;
+drop table image;
+drop table review;
+drop table cart;
+
+drop sequence product_seq;
+drop sequence review_seq;
+drop sequence cart_seq;
+
+drop index review_idx_rno;
+
+create table member (
+	username varchar2(10 char),
+	password varchar2(60 char) ,
+	email varchar2(30 char) ,
+	birthday date,
+	joinday date,
+	profile varchar2(40 char),
+	role varchar2(15 char),
+	constraint member_pk_username primary key(username)
+);
+
+create table product (
+	pno number(8),
+	vendor varchar2(100 char),
+	name varchar2(30 char),
+	info clob,
+	price number(8),
+	sales_count number(8),
+	sales_amount number(8),
+	stock number(8),
+	constraint product_pk_pno primary key(pno)
+);
+
+create table review (
+	rno number(7),
+	content varchar2(100 char),
+	writer varchar2(10 char),
+	write_time date,
+	star number(1),
+	pno number(7),
+	constraint review_pk_rno primary key(rno),
+	constraint review_fk_pno foreign key(pno) references product(pno)
+);
+
+create table image (
+	pno number(7),
+	name varchar(40 char),
+	constraint image_pk primary key(pno, name)
+);
+
+create table cart (
+	cno number(7), 
+	username varchar2(10 char), 
+	pno number(7), 
+	image varchar(40 char),
+	name varchar2(30 char), 
+	count number(7), 
+	price number(7), 
+	cart_price number(7),
+	constraint cart_pk_cno primary key(cno),
+	constraint cart_fk_pno foreign key(pno) references product(pno)
+);
+
+
+create sequence product_seq;
+create sequence review_seq;
+create sequence cart_seq;
+
+create index review_idx_pno on review(pno);
+create index cart_idx_username on cart(username);
+
+
+

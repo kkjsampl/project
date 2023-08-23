@@ -1,0 +1,103 @@
+1. 프로토콜(protocol)
+  - 응용 프로토콜 : HTTP(80), HTTPS(443), FTP(21), SMTP.....
+  - 전송 프로토콜 : TCP, UDP - 전송제어(오류제어....)
+                 각각 65536개의 포트를 가진다
+                 UDP는 멀티미디어용
+  - 인터넷 프로토콜 : IP(IP 주소를 제공)
+  - LAN 프로토콜 : ethernet
+
+2. 포트 : 인터넷을 이용중인 프로그램을 구별하기 위한 번호
+	- 명령창에서 netstat -ano 명령으로 시스템의 포트 상태를 확인할 수 있다
+  - 웹서버는 80번포트를 열고 사용자 접속을 기다린다(listen)
+  - 사용자가 접속하면 사용자와 새로운 포트를 연결해 서비스를 제공(80번은 다음 사용자를 기다린다)
+
+3. 방화벽(firewall)
+  - 포트를 차단하면 인터넷을 사용할 수 없다
+    방화벽은 포트를 차단
+  - 오라클 포트 : 1521
+ 
+4. 웹서버와 WAS
+  - 웹서버(http서버)는 사용자의 모든 요청을 접수하고 정적인 요청인 경우 서비스한다
+    자신이 이해못하는 요청일 경우 WAS에게 넘긴다
+  - WAS(Web Application Server) : 백엔드 자바를 실행해주는 서버 - tomcat, undertow
+    웹서버가 넘긴 요청을 처리해(jsp를 실행해) html을 생성한 다음 웹 서버에 토스
+  - 결국 사용자와 요청/응답하는 서버는 웹서버
+
+5. MVC(model 2)
+  - 웹개발에서 사용하는 형식
+  - Model : 데이터를 처리(DAO와 서비스)
+  - View : 데이터 출력 담당
+  - Controller : Model과 View를 연결
+
+6. 스프링의 역할
+  - Inversion of Control(제어역전) : 개발은 스프링이 끌고간다
+  - Dependency Injection(의존성 주입) : @Autowired
+  - AOP : 반복되는 작업(횡단관심. 대표적으로 로그인)을 자동화
+  
+7. 스프링의 구성
+	- 스프링은 서버에 올려서 실행하는 것이 아니라 내장 WAS를 사용한다
+	- 모든 사용자 요청을 접수하는 역할(FrontController)을 수행하는 서블릿 : DispatcherServlet
+	- 제어역전과 의존성 주입을 담당하는 컨테이너 : ApplicationContext
+	  component-scan에 의한 빈 생성 : @Component, @Controller, @Service, @Repository
+	  mybatis가 빈을 생성해 등록 : @Mapper
+	  개발자가 수동으로 빈을 생성해 등록 : @Bean
+  - 횡단관심 처리
+  		필터 : DispatcherServlet앞에서 동작. 스프링 시큐리티가 사용
+  		인터셉터 :  DispatcherServlet 뒤, 컨트롤러 앞에서 동작
+  		AOP : 단순히 위치 뿐아니라 각종 조건을 추가해 내가 원하는 경우에만 동작하도록 상세 설정 가능
+
+8. 스프링 프로젝트 설정
+	  
+8. 스프링 컨트롤러의 리턴
+  - void로 리턴하면 Mapping주소가 jsp의 이름이 된다
+    @GetMapping("/read")
+    public void read(Model model) {   
+      // jsp이름: read.jsp, 데이터 : model
+    }
+  - String을 리턴할 경우 String이 jsp 이름
+    @GetMapping("/read")
+    public String read(Model model) {
+      model.addAttribute("board", board);
+      return "view";   
+    }   
+  - jsp의 이름과 출력할 데이터로 ModelAndView 객체를 만들 수 있다 
+    @GetMapping("/read")
+    public ModelAndView read() {
+      return new ModelAndView("view").addObject("board", board); 
+    }   
+
+9. 값을 전달하기
+  - Model
+  	Model에 저장한 값은 실제로는 request 객체에 담긴 1회성 메시지
+  	jsp에 출력하고 나면 사라진다
+  - HttpSession
+    서버에 마련된 사용자 정보 저장 공간
+    사용자마다 하나씩 가진다
+    로그인이나 장바구니 등에 사용된다
+    일정시간동안 사용하지 않으면 파괴된다
+    "사용자가 접근했는데 세션이 없으면 새로 생성" 
+  - RedirectAttributes
+  	오류 메시지의 경우 오류가 발생한 곳과 오류 메시지를 출력하는 곳이 다르다
+  	(오류가 발생하면 그 곳을 빠져나와 다른 곳으로 이동해야하므로)
+  	세션을 이용해 redirect + 출력하면 사라지는	1회성 메시지를 구현한 기술 
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
